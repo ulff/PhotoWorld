@@ -1,0 +1,111 @@
+UlffPhotoWorldBundle_homepage:
+    pattern:  /
+    defaults: { _controller: UlffPhotoWorldBundle:Gallery:list }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_about:
+    pattern:  /about
+    defaults: { _controller: UlffPhotoWorldBundle:Gallery:about }
+    requirements:
+        _method:  GET
+      
+UlffPhotoWorldBundle_albumindex:
+    pattern:  /album/{id}
+    defaults: { _controller: UlffPhotoWorldBundle:Album:list }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_showphoto:
+    pattern:  /photo/{id}
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:show }
+    requirements:
+        _method:  GET
+        
+UlffPhotoWorldBundle_uploadphoto:
+    pattern:  /album/{albumid}/upload
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:upload }
+    requirements:
+        _method:  GET|POST
+        albumid: \d+
+
+UlffPhotoWorldBundle_createalbum:
+    pattern:  /create
+    defaults: { _controller: UlffPhotoWorldBundle:Album:create }
+    requirements:
+        _method:  GET|POST
+
+UlffPhotoWorldBundle_generatephotos:
+    pattern:  /album/{id}/generate
+    defaults: { _controller: UlffPhotoWorldBundle:Album:generate }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_managealbum:
+    pattern:  /album/{id}/manage
+    defaults: { _controller: UlffPhotoWorldBundle:Album:manage }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_rotateleft:
+    pattern:  /photo/{id}/rotateleft
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:rotateleft }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_rotateright:
+    pattern:  /photo/{id}/rotateright
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:rotateright }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_removephoto:
+    pattern:  /photo/{id}/remove
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:remove }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_removealbum:
+    pattern:  /album/{id}/remove
+    defaults: { _controller: UlffPhotoWorldBundle:Album:remove }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_editphoto:
+    pattern:  /photo/{id}/edit
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:edit }
+    requirements:
+        _method:  GET|POST
+        id: \d+
+
+UlffPhotoWorldBundle_editalbum:
+    pattern:  /album/{id}/edit
+    defaults: { _controller: UlffPhotoWorldBundle:Album:edit }
+    requirements:
+        _method:  GET|POST
+        id: \d+
+
+UlffPhotoWorldBundle_photomoveup:
+    pattern:  /photo/{id}/moveup
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:moveup }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_photomovedown:
+    pattern:  /photo/{id}/movedown
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:movedown }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_albumdefaultsorting:
+    pattern:  /album/{id}/defaultsorting
+    defaults: { _controller: UlffPhotoWorldBundle:Album:defaultSorting }
+    requirements:
+        _method:  GET
+
+UlffPhotoWorldBundle_createalbumzip:
+    pattern:  /album/{id}/createzip
+    defaults: { _controller: UlffPhotoWorldBundle:Album:createZip }
+    requirements:
+        _method:  GET
+

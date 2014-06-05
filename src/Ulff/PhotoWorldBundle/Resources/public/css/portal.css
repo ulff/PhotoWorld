@@ -1,0 +1,183 @@
+body {
+    padding: 0; margin: 0; font-family: arial; font-size: 12px; color: #4a4a4a;
+}
+
+div.top-toolbar {
+    background-color: #205081; height: 40px; border-bottom: 1px solid #3800E0; position: fixed; left: 0; top: 0; right: 0; z-index: 10000;
+}
+
+div.top-toolbar-contents {
+    margin: 10px;
+}
+
+div.top-toolbar-menu {
+    float:right; height: 40px; padding: 0; margin: -10px; vertical-align: middle;
+}
+
+ul.top-toolbar-menu {
+    height: 100%; margin: 0;
+}
+
+ul li.top-toolbar-menu:hover {
+   background-color: #3B73AF;
+}
+
+li.top-toolbar-menu {
+   padding: 10px; float: left; list-style: none;
+}
+
+li.top-toolbar-button {
+    float: left; list-style: none; margin: 5px;
+}
+
+a.top-toolbar-menu {
+    color: #ffffff; height: 100%; display: block; line-height: 20px; font-family: arial; font-size: 12px; font-weight: bold; text-decoration: none;
+}
+
+a:hover.top-toolbar-menu {
+    text-decoration: none; color: #ffffff;
+}
+
+a.top-toolbar-logo {
+    color: #ffffff; font-family: arial; font-size: 20px; text-decoration: none; line-height: 22px;
+}
+
+a:hover.top-toolbar-logo {
+    color: #ffffff; font-family: arial; font-size: 20px; text-decoration: none; line-height: 22px;
+}
+
+div.portal-contents {
+    margin: 20px; margin-top: 60px;
+}
+
+a {
+    font-family: arial; text-decoration: none; color: #006AFF;
+}
+
+a:hover {
+    color: red;
+}
+
+a.large {
+    text-decoration: none; margin-left: 20px;
+}
+
+a:hover.large {
+    text-decoration: underline; color: #006AFF;
+}
+
+div.system-message {
+    -moz-border-radius: 5px; border-radius: 5px; border: 1px solid green; color: green; background-color: #f2f2f2; padding: 15px; margin: 10px 0 10px 0;
+}
+
+div.system-failure {
+    -moz-border-radius: 5px; border-radius: 5px; border: 1px solid red; color: red; background-color: #f2f2f2; padding: 15px; margin: 10px 0 10px 0;
+}
+
+div.fullsize-photo {
+    position: fixed; top: 60px; left: 20px; right: 20px; bottom: 20px;
+}
+
+div.fullsize-photo-container {
+    width: 75%; position: absolute; right: 0; top: 0; bottom: 0;
+}
+
+div.fullsize-photo-toolbar {
+    width: 25%; position: absolute; top: 0; bottom: 0; left: 0;
+}
+
+img.fullsize-photo-image {
+    max-width: 100%; max-height: 100%; margin: auto; display: block;
+}
+
+span.footnotes {
+    color: #a0a0a0; font-size: -2px;
+}
+
+div.photo-footnotes {
+    bottom: 20px; position: absolute;
+}
+
+div.thumbnail {
+    display: inline-block;
+}
+
+img.thumbnail {
+    height: 180px !important; border: none !important; margin: 0; padding: 0;
+}
+
+div.prev-next {
+    bottom: 100px; position: absolute; width: 100%; text-align: center;
+}
+
+div.album-manager-item {
+    -moz-border-radius: 5px; border-radius: 5px; border: 1px solid #a7a7a7; margin: 10px; background-color: #f0f0f0; clear: both; overflow: hidden;
+}
+
+div.album-manager-thumbnail {
+    margin: 10px; display: inline-block; float: left;
+}
+
+div.album-manager-tools {
+    margin: 10px; overflow: hidden; display: block; height: 180px; width: auto;
+}
+
+div.album-manager-main {
+    margin: 20px;
+}
+
+div.album-zip-box {
+    float: right;
+}
+
+div.center-container {
+    margin: 0 auto; width: 600px; border: 1px solid #a0a0a0; padding: 50px; background-color: #f0f0f0; -moz-border-radius: 15px; border-radius: 15px;
+}
+
+form.form-default { font-size: 16px; }
+form.form-default div { clear: left; margin-bottom: 10px; }
+form.form-default label { float: left; margin-right: 10px; text-align: right; width: 100px; vertical-align: top; padding-top: 10px; }
+form.form-default input[type="text"],
+form.form-default input[type="email"]
+    { width: 500px; line-height: 26px; font-size: 20px; min-height: 26px; }
+form.form-default textarea { width: 500px; height: 150px; line-height: 26px; font-size: 20px; }
+form.form-default input[type="submit"] {; line-height: 26px; font-size: 16px; min-height: 26px; }
+form.form-default ul li { color: #ff0000; margin-bottom: 5px; }
+
+form.form-custom { font-size: 16px; }
+form.form-custom div { clear: left; margin-bottom: 10px; }
+form.form-custom label { margin-right: 10px; text-align: right; width: 150px; vertical-align: top; padding-top: 10px;}
+form.form-custom #fos_user_registration_form label { float:left;}
+form.form-custom #fos_user_profile_form label { float:left;}
+form.form-custom input[type="text"],
+form.form-custom input[type="password"],
+form.form-custom input[type="email"]
+{ width: 300px; line-height: 26px; font-size: 20px; min-height: 26px; }
+form.form-custom textarea { width: 300px; height: 150px; line-height: 26px; font-size: 20px; }
+form.form-custom input[type="submit"] {margin-left: 165px; line-height: 26px; font-size: 16px; min-height: 26px; }
+form.form-custom ul { margin-bottom:0px; float:left; margin-top:10px;}
+form.form-custom ul li { color: #ff0000; margin-bottom: 5px; font-size:11px; width:250px;}
+
+div.gallery-element {
+    -moz-border-radius: 10px; border-radius: 10px; background-color: #205081; box-shadow: 0 14px 16px -6px #5E5E5E; cursor: pointer; width: 400px; height: 80px; margin: 20px; display: inline-block;
+}
+
+div:hover.gallery-element {
+    background-color: #3B73AF;
+}
+
+a.gallery-element-title {
+    color: #ffffff; text-decoration: none; display: block;  height: 100%; weight: 100%; padding: 20px 20px 0px 20px; font-weight: bold; font-size: 16px;
+}
+
+span.gallery-element-footnotes {
+    color: #ffffff;  font-size: 10px; font-weight: normal;
+}
+
+.user-profile {
+    font-size: 16px;
+}
+
+.bold {
+    font-weight: bold;
+}

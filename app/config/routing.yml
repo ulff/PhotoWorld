@@ -1,0 +1,7 @@
+ulff_photoworld:
+    resource: "@UlffPhotoWorldBundle/Resources/config/routing.yml"
+    prefix:   /
+
+ulff_user:
+    resource: "@UlffUserBundle/Resources/config/routing.yml"
+    prefix:   /

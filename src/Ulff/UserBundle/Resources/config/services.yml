@@ -1,0 +1,12 @@
+services:
+    ulff_user.registration.form.type:
+        class: Ulff\UserBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: ulff_user_registration }
+
+    ulff_user.profile.form.type:
+            class: Ulff\UserBundle\Form\Type\ProfileFormType
+            arguments: [%fos_user.model.user.class%]
+            tags:
+                - { name: form.type, alias: ulff_user_profile }

@@ -1,0 +1,27 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <div class="breadcrumbs">
+        &raquo;
+        <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+        &raquo;
+        About
+    </div>
+
+    <div class="center-container">
+        <p class="bold">About PhotoWorld</p>
+        <p>
+        PhotoWorld is a very simple photo gallery, based on popular <a href="http://symfony.com/" target="_blank">Symfony2</a> framework.
+        </p>
+        <br>
+        <p class="bold">The benefits of registering</p>
+        <p>
+        Currently signing up on PhotoWorld will enable you to create and manage your albums.
+        In the nearest future you also will be able to post comments or give ratings to photos.
+        </p>
+        <br>
+        <p>Olaf Gałązka (Ulff)</p>
+    </div>
+
+{% endblock %}

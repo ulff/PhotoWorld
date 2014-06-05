@@ -1,0 +1,47 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="breadcrumbs">
+    &raquo;
+    <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+    &raquo;
+    Your profile
+</div>
+
+<div class="center-container">
+    <table>
+        <tr>
+            <td style="padding: 10px;">
+                <p class="user-profile bold">{{ 'profile.show.username'|trans }}:</p>
+            </td>
+            <td style="padding: 10px;">
+                <p class="user-profile">{{ user.username }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">
+                <p class="user-profile bold">{{ 'profile.show.email'|trans }}:</p>
+            </td>
+            <td style="padding: 10px;">
+                <p class="user-profile">{{ user.email }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">
+                <p class="user-profile bold">{{ 'profile.show.firstname'|trans }}:</p>
+            </td>
+            <td style="padding: 10px;">
+                <p class="user-profile">{{ user.firstname }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px;">
+                <p class="user-profile bold">{{ 'profile.show.lastname'|trans }}:</p>
+            </td>
+            <td style="padding: 10px;">
+                <p class="user-profile">{{ user.lastname }}</p>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <a class="btn btn-primary" href="{{ path('fos_user_profile_edit') }}">Change</a>
+</div>

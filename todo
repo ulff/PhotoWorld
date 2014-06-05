@@ -1,0 +1,19 @@
++ rotating photos
++ packing all album photos into zip
++ album management (delete photos, rotating, sorting, uploading, generating, etc)
++ bug: removing albums - remove zip first
++ add flashbag information after actions
++ apply default sorting action
++ after photo action focus on updated photo
++ main page tiles layout (albums list)
++ add users
+
+- correct data-fixtures
+- create full unit test suit
+- add comments
+- add likes/ratings
+- add about page with description why users should sign up
+
+? bug: regenerating zip archive
+
+

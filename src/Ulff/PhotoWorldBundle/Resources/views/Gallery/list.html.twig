@@ -1,0 +1,30 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <div class="breadcrumbs">
+        &raquo;
+        Home
+    </div>
+
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="system-message">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    <div>
+    {% for album in albumList %}
+        <div class="gallery-element">
+            <a class="gallery-element-title" href="{{ path('UlffPhotoWorldBundle_albumindex', { 'id': album.id }) }}">
+                {{ album.title }}
+                <br />
+                <span class="gallery-element-footnotes">Created: {{ album.createdate|date('j F Y, H:i') }}</span>
+            </a>
+        </div>
+    {% else %}
+        <div class="system-message">No albums yet</div>
+    {% endfor %}
+    </div>
+
+{% endblock %}

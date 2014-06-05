@@ -1,0 +1,45 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <div class="breadcrumbs">
+        &raquo;
+        <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+        &raquo;
+        Album: {{ album.title }}
+    </div>
+
+    {% if zippath %}
+        <div class="album-zip-box">
+            <a class="btn btn-primary" href="{{ asset(zippath) }}">Get all in ZIP</a>
+        </div>
+    {% endif %}
+
+    <h3>{{ album.title }}</h3>
+    
+    {% if album.description %}
+        <p class="subtitle">{{ album.description }}</p>
+    {% endif %}
+    
+    {# <span class="footnotes">Created: {{ album.createdate|date('j F Y, H:i') }}</span> #}
+
+    <div>
+    {% for photo in photoList %}
+        <div class="thumbnail">
+            <a href="{{ path('UlffPhotoWorldBundle_showphoto', { 'id': photo.id }) }}">
+                <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}" />
+            </a>
+        </div>
+    {% else %}
+        <div class="system-message">No photos yet</div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+
+    <link href="{{ asset('bundles/ulffphotoworld/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/ulffphotoworld/css/portal.css') }}" type="text/css" rel="stylesheet" />
+
+{% endblock %}

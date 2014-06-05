@@ -1,0 +1,15 @@
+parameters:
+    ulff_photoworld.kernel_requires_authorization_listener.class: 'Ulff\PhotoWorldBundle\EventListener\RequiresAuthorizationListener'
+    ulff_photoworld.kernel_exception_listener.class: 'Ulff\PhotoWorldBundle\EventListener\ExceptionListener'
+
+services:
+    ulff_photoworld.kernel_requires_authorization_listener:
+        class: %ulff_photoworld.kernel_requires_authorization_listener.class%
+        arguments: [ '@annotation_reader', '@service_container' ]
+        tags:
+            -  {name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
+    ulff_photoworld.kernel_exception_listener:
+            class: %ulff_photoworld.kernel_exception_listener.class%
+            tags:
+                -  {name: kernel.event_listener, event: kernel.exception, method: onKernelException }

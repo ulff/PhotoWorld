@@ -1,0 +1,62 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <div class="fullsize-photo">
+        
+        <div class="fullsize-photo-toolbar">
+            
+            <div class="breadcrumbs">
+                &raquo;
+                <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+                &raquo;
+                <a href="{{ path('UlffPhotoWorldBundle_albumindex', { 'id': photo.getAlbum.getId }) }}">Album: {{ photo.getAlbum.getTitle }}</a>
+                &raquo;
+                Photo: {{ position }} of {{ totalphotos }}
+            </div>
+
+            {% if photo.title is defined %}
+                <h3>{{photo.title }}</h3>
+            {% endif %}
+                
+            {% if photo.description is defined %}
+                <p class="subtitle">{{ photo.description }}</p>
+            {% endif %}
+            
+            <div class="prev-next">
+                 <div class="btn-group btn-group-lg">
+                    {% if previd %}
+                        <a class="btn btn-primary" href="{{ path('UlffPhotoWorldBundle_showphoto', { 'id': previd }) }}">Previous</a>
+                    {% else %}    
+                        <span class="btn btn-default disabled">Previous</span>
+                    {% endif %}
+
+                    {% if nextid %}
+                        <a class="btn btn-primary" href="{{ path('UlffPhotoWorldBundle_showphoto', { 'id': nextid }) }}">Next</a>
+                    {% else %}
+                        <span class="btn btn-default disabled">Next</span>
+                    {% endif %}
+                </div>
+            </div>
+                
+            <div class="photo-footnotes">
+                <span class="footnotes">Uploaded: {{ photo.createdate|date('j F Y, H:i') }}</span>
+            </div>
+                
+        </div>
+        
+        <div class="fullsize-photo-container">
+            <img class="fullsize-photo-image" src="{{ image(photo.getWebPath).resize(null, 1000) }}">
+        </div>
+        
+    </div>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+
+    <link href="{{ asset('bundles/ulffphotoworld/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/ulffphotoworld/css/portal.css') }}" type="text/css" rel="stylesheet" />
+
+{% endblock %}

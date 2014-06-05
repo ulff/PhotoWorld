@@ -1,0 +1,20 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="breadcrumbs">
+    &raquo;
+    <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+    &raquo;
+    <a href="{{ path('fos_user_profile_show') }}">Your profile</a>
+    &raquo;
+    Editing profile
+</div>
+
+<div class="center-container">
+    <form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST" class="form-custom">
+        {{ form_widget(form) }}
+        <div>
+            <input type="submit" value="{{ 'profile.edit.submit'|trans }}" class="btn btn-success btn-lg" />
+            <a class="btn btn-warning" href="{{ path('fos_user_profile_show') }}">Cancel</a>
+        </div>
+    </form>
+</div>

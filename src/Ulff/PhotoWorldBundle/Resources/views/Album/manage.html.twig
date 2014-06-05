@@ -1,0 +1,99 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <div class="breadcrumbs">
+        &raquo;
+        <a href="{{ path('UlffPhotoWorldBundle_homepage') }}">Home</a>
+        &raquo;
+        <a href="{{ path('UlffPhotoWorldBundle_albumindex', { 'id': album.id }) }}">Album: {{ album.title }}</a>
+        &raquo;
+        Album management
+    </div>
+
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="system-message">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    <div class="album-manager-main">
+        <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_uploadphoto', { 'albumid': album.id }) }}">Upload photo</a>
+        <a class="btn btn-danger" onclick="return confirm('Are you sure? This will remove all photos from album!');" href="{{ path('UlffPhotoWorldBundle_removealbum', { 'id': album.id }) }}">Remove whole album</a>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                More actions on album <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="{{ path('UlffPhotoWorldBundle_editalbum', { 'id': album.id }) }}">Edit album properties</a></li>
+                <li class="divider"></li>
+                <li><a href="{{ path('UlffPhotoWorldBundle_generatephotos', { 'id': album.id }) }}">Auto-generate album</a></li>
+                <li><a href="{{ path('UlffPhotoWorldBundle_albumdefaultsorting', { 'id': album.id }) }}">Apply default sorting</a></li>
+                <li><a href="{{ path('UlffPhotoWorldBundle_createalbumzip', { 'id': album.id }) }}">Create album ZIP file</a></li>
+            </ul>
+        </div>
+
+        <h3>{{ album.title }}</h3>
+
+        {% if album.description %}
+            <p class="subtitle">{{ album.description }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+    {% for photo in photoList %}
+        <div class="album-manager-item">
+            <a name="photo-id-{{ photo.id }}"></a>
+
+            <div class="album-manager-thumbnail">
+                <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}?nocache= {{ uniqid }}" />
+            </div>
+            <div class="album-manager-tools">
+
+                <a class="btn btn-primary" href="{{ path('UlffPhotoWorldBundle_editphoto', { 'id': photo.id }) }}">Edit</a>
+                <a class="btn btn-danger" href="{{ path('UlffPhotoWorldBundle_removephoto', { 'id': photo.id }) }}">Remove</a>
+
+                <div class="btn-group">
+                    <a class="btn btn-default" href="{{ path('UlffPhotoWorldBundle_rotateleft', { 'id': photo.id }) }}">Rotate left</a>
+                    <a class="btn btn-default" href="{{ path('UlffPhotoWorldBundle_rotateright', { 'id': photo.id }) }}">Rotate right</a>
+                </div>
+
+                <div class="btn-group">
+                    <a class="btn btn-default" href="{{ path('UlffPhotoWorldBundle_photomovedown', { 'id': photo.id }) }}">Move down</a>
+                    <a class="btn btn-default" href="{{ path('UlffPhotoWorldBundle_photomoveup', { 'id': photo.id }) }}">Move up</a>
+                </div>
+
+                {% if photo.title %}
+                    <h3>{{ photo.title }}</h3>
+                {% endif %}
+
+                {% if photo.description %}
+                    <p>{{ photo.description }}</p>
+                {% endif %}
+
+            </div>
+        </div>
+    {% else %}
+        <div class="system-message">No photos yet</div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+
+    <link href="{{ asset('bundles/ulffphotoworld/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/ulffphotoworld/css/portal.css') }}" type="text/css" rel="stylesheet" />
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/ulffphotoworld/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ulffphotoworld/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
+{% endblock %}
