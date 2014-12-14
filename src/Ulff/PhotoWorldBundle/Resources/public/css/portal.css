@@ -158,20 +158,20 @@ form.form-custom input[type="submit"] {margin-left: 165px; line-height: 26px; fo
 form.form-custom ul { margin-bottom:0px; float:left; margin-top:10px;}
 form.form-custom ul li { color: #ff0000; margin-bottom: 5px; font-size:11px; width:250px;}
 
-div.gallery-element {
-    -moz-border-radius: 10px; border-radius: 10px; background-color: #205081; box-shadow: 0 14px 16px -6px #5E5E5E; cursor: pointer; width: 400px; height: 80px; margin: 20px; display: inline-block;
+div.gallery-item-album {
+    -moz-border-radius: 10px; border-radius: 10px; background-color: #205081; box-shadow: 0 14px 16px -6px #5E5E5E; cursor: pointer; width: 400px; height: 100px; margin: 20px; display: inline-block;
 }
 
-div:hover.gallery-element {
+div:hover.gallery-item-album {
     background-color: #3B73AF;
 }
 
-a.gallery-element-title {
+a.gallery-item-album-title {
     color: #ffffff; text-decoration: none; display: block;  height: 100%; weight: 100%; padding: 20px 20px 0px 20px; font-weight: bold; font-size: 16px;
 }
 
-span.gallery-element-footnotes {
-    color: #ffffff;  font-size: 10px; font-weight: normal;
+ul.gallery-item-album-information {
+    color: #ffffff;  font-size: 10px; font-weight: normal; list-style: none; padding-left:0; margin-top: 5px;
 }
 
 .user-profile {

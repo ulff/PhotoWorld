@@ -15,11 +15,20 @@
 
     <div>
     {% for album in albumList %}
-        <div class="gallery-element">
-            <a class="gallery-element-title" href="{{ path('UlffPhotoWorldBundle_albumindex', { 'id': album.id }) }}">
+        <div class="gallery-item-album">
+            <a class="gallery-item-album-title" href="{{ path('UlffPhotoWorldBundle_albumindex', { 'id': album.id }) }}">
                 {{ album.title }}
-                <br />
-                <span class="gallery-element-footnotes">Created: {{ album.createdate|date('j F Y, H:i') }}</span>
+                <ul class="gallery-item-album-information">
+                    <li>Created: <strong>{{ album.createdate|date('j F Y, H:i') }}</strong></li>
+                    <li>Author: <strong>
+                        {% if album.uid is not null %}
+                            {{ album.firstname }} {{ album.lastname }}
+                        {% else %}
+                            <i>unknown</i>
+                        {% endif %}
+                    </strong></li>
+                    <li>Total photos: <strong>{{ album.total }}</strong></li>
+                </ul>
             </a>
         </div>
     {% else %}
