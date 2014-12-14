@@ -29,6 +29,14 @@ UlffPhotoWorldBundle_uploadphoto:
         _method:  GET|POST
         albumid: \d+
 
+UlffPhotoWorldBundle_multiupload:
+    pattern:  /album/{albumid}/multiupload
+    defaults: { _controller: UlffPhotoWorldBundle:Album:multiupload }
+    requirements:
+        _method:  GET|POST
+        albumid: \d+
+
+
 UlffPhotoWorldBundle_createalbum:
     pattern:  /create
     defaults: { _controller: UlffPhotoWorldBundle:Album:create }

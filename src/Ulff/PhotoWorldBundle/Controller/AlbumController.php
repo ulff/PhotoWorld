@@ -5,6 +5,7 @@ namespace Ulff\PhotoWorldBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ulff\PhotoWorldBundle\Entity\Album;
 use Ulff\PhotoWorldBundle\Form\AlbumType;
+use Ulff\PhotoWorldBundle\Form\MultiUploadType;
 use Ulff\PhotoWorldBundle\Entity\Photo;
 use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
 
@@ -74,6 +75,67 @@ class AlbumController extends Controller {
         }
 
         return $this->render('UlffPhotoWorldBundle:Album:create.html.twig', array(
+            'album' => $album,
+            'form' => $form->createView()
+        ));
+    }
+
+    /**
+     * @RequiresAuthorization()
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Ulff\PhotoWorldBundle\Exceptions\UnauthorizedException
+     */
+    public function multiuploadAction($albumid) {
+
+        $album = $this->getAlbum($albumid);
+
+        $request = $this->getRequest();
+        $form = $this->createForm(new MultiUploadType());
+
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+
+            if ($form->isValid()) {
+
+                $securityContext = $this->container->get('security.context');
+                $loggedUser = $securityContext->getToken()->getUser();
+
+                $formData = $form->getData();
+
+                $photoFiles = $formData['files'];
+
+                foreach($photoFiles as $photoFile) {
+
+                    $photo = new Photo();
+
+                    $photo->setCreatedby($loggedUser->getId());
+
+                    $photo->setAlbum($album);
+                    $photo->setPhotofile($photoFile);
+                    $photo->upload();
+
+                    $em = $this->getDoctrine()->getManager();
+                    $maxSortNumber = $em->getRepository('UlffPhotoWorldBundle:Photo')->getAlbumMaxSortNumber($albumid);
+                    $photo->setSortnumber(++$maxSortNumber);
+
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($photo);
+                    $em->flush();
+                }
+
+                $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Photos have been added'
+                );
+
+                return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
+                    'id' => $album->getId()
+                )));
+            }
+        }
+
+        return $this->render('UlffPhotoWorldBundle:Album:multiupload.html.twig', array(
             'album' => $album,
             'form' => $form->createView()
         ));
@@ -163,7 +225,7 @@ class AlbumController extends Controller {
         );
 
         foreach($photoList as $photo) {
-            unlink($photo->getAbsolutePath());
+            @unlink($photo->getAbsolutePath());
             $em->remove($photo);
             $em->flush();
         }
@@ -172,7 +234,7 @@ class AlbumController extends Controller {
             unlink($album->getAlbumDirectoryWebPath().'/all.zip');
         }
 
-        rmdir($album->getAlbumDirectoryPath());
+        @rmdir($album->getAlbumDirectoryPath());
         $em->remove($album);
         $em->flush();
 
