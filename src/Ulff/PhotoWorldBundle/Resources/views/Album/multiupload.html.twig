@@ -1,0 +1,29 @@
+{% extends 'UlffPhotoWorldBundle::portal.html.twig' %}
+
+{% block contents %}
+
+    <h3>Upload multiple photos</h3>
+
+    {% for flashMessage in app.session.flashbag.get('photoworld-notice') %}
+        {{ flashMessage }}
+    {% endfor %}
+
+    <form action="{{ path('UlffPhotoWorldBundle_multiupload', { 'albumid': album.id }) }}" method="post" class="form-default" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+
+        {{ form_row(form.files) }}
+
+        {{ form_rest(form) }}
+
+        <input type="submit" value="Upload" class="btn btn-success"/>
+        <a class="btn btn-primary" href="{{ path('UlffPhotoWorldBundle_managealbum', { 'id': album.id }) }}">Go back</a>
+    </form>
+    
+{% endblock %}{# empty Twig template #}
+
+{% block stylesheets %}
+
+    <link href="{{ asset('bundles/ulffphotoworld/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/ulffphotoworld/css/portal.css') }}" type="text/css" rel="stylesheet" />
+
+{% endblock %}

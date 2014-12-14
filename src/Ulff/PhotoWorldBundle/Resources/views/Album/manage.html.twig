@@ -18,6 +18,7 @@
     {% endfor %}
 
     <div class="album-manager-main">
+        <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_multiupload', { 'albumid': album.id }) }}">Upload multiple photos</a>
         <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_uploadphoto', { 'albumid': album.id }) }}">Upload photo</a>
         <a class="btn btn-danger" onclick="return confirm('Are you sure? This will remove all photos from album!');" href="{{ path('UlffPhotoWorldBundle_removealbum', { 'id': album.id }) }}">Remove whole album</a>
 
