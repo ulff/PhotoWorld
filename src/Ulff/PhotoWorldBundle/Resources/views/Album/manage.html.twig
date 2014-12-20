@@ -19,7 +19,7 @@
 
     <div class="album-manager-main">
         <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_multiupload', { 'albumid': album.id }) }}">Upload multiple photos</a>
-        <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_uploadphoto', { 'albumid': album.id }) }}">Upload photo</a>
+        <a class="btn btn-success" href="{{ path('UlffPhotoWorldBundle_uploadphoto', { 'albumid': album.id }) }}">Upload photo or video</a>
         <a class="btn btn-danger" onclick="return confirm('Are you sure? This will remove all photos from album!');" href="{{ path('UlffPhotoWorldBundle_removealbum', { 'id': album.id }) }}">Remove whole album</a>
 
         <div class="btn-group">
@@ -48,7 +48,16 @@
             <a name="photo-id-{{ photo.id }}"></a>
 
             <div class="album-manager-thumbnail">
-                <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}?nocache= {{ uniqid }}" />
+                {% if photo.getTypeCategory == 'image' %}
+                    <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}?nocache= {{ uniqid }}" />
+                {% endif %}
+
+                {% if photo.getTypeCategory == 'video' %}
+                    <video height="180" controls>
+                        <source src="{{ abs_www_path }}{{ photo.getWebPath }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% endif %}
             </div>
             <div class="album-manager-tools">
 

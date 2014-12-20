@@ -13,3 +13,6 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    ulff.abs_www_path: http://localhost/PhotoWorld/
+

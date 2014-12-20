@@ -33,6 +33,7 @@ class AlbumController extends Controller {
             'photoList' => $photoList,
             'album' => $album,
             'zippath' => $zipPath,
+            'abs_www_path' => $this->container->getParameter('ulff.abs_www_path')
         ));
     }
 
@@ -113,6 +114,7 @@ class AlbumController extends Controller {
 
                     $photo->setAlbum($album);
                     $photo->setPhotofile($photoFile);
+                    $photo->resolveType();
                     $photo->upload();
 
                     $em = $this->getDoctrine()->getManager();
@@ -200,7 +202,8 @@ class AlbumController extends Controller {
         return $this->render('UlffPhotoWorldBundle:Album:manage.html.twig', array(
             'photoList' => $photoList,
             'album' => $album,
-            'uniqid' => uniqid()
+            'uniqid' => uniqid(),
+            'abs_www_path' => $this->container->getParameter('ulff.abs_www_path')
         ));
     }
 

@@ -90,6 +90,10 @@ img.fullsize-photo-image {
     max-width: 100%; max-height: 100%; margin: auto; display: block;
 }
 
+video.fullsize-photo-image {
+    max-width: 100%; max-height: 100%; margin: auto; display: block;
+}
+
 span.footnotes {
     color: #a0a0a0; font-size: -2px;
 }
@@ -103,6 +107,10 @@ div.thumbnail {
 }
 
 img.thumbnail {
+    height: 180px !important; border: none !important; margin: 0; padding: 0;
+}
+
+video.thumbnail {
     height: 180px !important; border: none !important; margin: 0; padding: 0;
 }
 
