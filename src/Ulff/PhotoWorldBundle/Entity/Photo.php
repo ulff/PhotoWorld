@@ -12,12 +12,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * Description of Photo
  *
  * @author ulff
- * 
+ *
  * @ORM\Entity(repositoryClass="Ulff\PhotoWorldBundle\Entity\Repository\PhotoRepository")
  * @ORM\Table(name="photo")
  * @ORM\HasLifecycleCallbacks
  */
-class Photo {
+class Photo
+{
 
     /**
      * @ORM\Id
@@ -42,6 +43,11 @@ class Photo {
     protected $path;
 
     /**
+     * @ORM\Column(type="string", length=10)
+     */
+    protected $type;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected $createdate;
@@ -50,9 +56,9 @@ class Photo {
      * @ORM\Column(type="integer")
      */
     protected $createdby;
-    
+
     /**
-     * @Assert\File(maxSize="10M")
+     * @Assert\File(maxSize="250M")
      */
     protected $photofile;
 
@@ -60,99 +66,134 @@ class Photo {
      * @ORM\Column(type="integer")
      */
     protected $sortnumber;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Album", inversedBy="photos")
      * @ORM\JoinColumn(name="albumid", referencedColumnName="id")
      */
     protected $album;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->setCreatedate(new \DateTime());
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
 
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
-    public function setDescription($description) {
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getTypeCategory()
+    {
+        $typeExploded = explode('/',$this->type);
+        return reset($typeExploded);
+    }
+
+    public function setDescription($description)
+    {
         $this->description = $description;
         return $this;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setPath($path) {
+    public function setPath($path)
+    {
         $this->path = $path;
         return $this;
     }
 
-    public function getPath() {
+    public function getPath()
+    {
         return $this->path;
     }
 
-    public function setCreatedate($createdate) {
+    public function setCreatedate($createdate)
+    {
         $this->createdate = $createdate;
         return $this;
     }
 
-    public function getCreatedate() {
+    public function getCreatedate()
+    {
         return $this->createdate;
     }
 
-    public function setCreatedby($createdby) {
+    public function setCreatedby($createdby)
+    {
         $this->createdby = $createdby;
         return $this;
     }
 
-    public function getCreatedby() {
+    public function getCreatedby()
+    {
         return $this->createdby;
     }
-    
-    public function setPhotofile(UploadedFile $photofile = null) {
+
+    public function setPhotofile(UploadedFile $photofile = null)
+    {
         $this->photofile = $photofile;
-        
+
         return $this;
     }
 
-    public function getPhotofile() {
+    public function getPhotofile()
+    {
         return $this->photofile;
     }
 
-    public function setSortnumber($sortnumber) {
+    public function setSortnumber($sortnumber)
+    {
         $this->sortnumber = $sortnumber;
         return $this;
     }
 
-    public function getSortnumber() {
+    public function getSortnumber()
+    {
         return $this->sortnumber;
     }
 
-    public function setAlbum(\Ulff\PhotoWorldBundle\Entity\Album $album = null) {
+    public function setAlbum(\Ulff\PhotoWorldBundle\Entity\Album $album = null)
+    {
         $this->album = $album;
         return $this;
     }
 
-    public function getAlbum() {
+    public function getAlbum()
+    {
         return $this->album;
     }
 
-    public function upload() {
+    public function upload()
+    {
         if (null === $this->getPhotofile()) {
             return;
         }
-        
+
         $photofilePath = $this->resolvePhotoPath();
 
         $this->getPhotofile()->move(
@@ -164,31 +205,43 @@ class Photo {
         $this->photofile = null;
     }
 
-    public function getAbsolutePath() {
+    public function getAbsolutePath()
+    {
         return null === $this->path ? null : $this->getUploadRootDir() . '/' . $this->path;
     }
 
-    public function getWebPath() {
+    public function getWebPath()
+    {
         return null === $this->path ? null : $this->getUploadDir() . '/' . $this->path;
     }
 
-    public function getPhotoFileName() {
-        return str_replace($this->getAlbum()->getId().'/', '', $this->path);
+    public function getPhotoFileName()
+    {
+        return str_replace($this->getAlbum()->getId() . '/', '', $this->path);
     }
 
-    protected function getUploadRootDir() {
+    public function resolveType()
+    {
+        $this->setType(strtolower($this->getPhotofile()->getMimeType()));
+    }
+
+    protected function getUploadRootDir()
+    {
         return __DIR__ . '/../../../../web/' . $this->getUploadDir();
     }
 
-    protected function getUploadDir() {
+    protected function getUploadDir()
+    {
         return 'uploads/photoworld';
     }
-    
-    protected function resolvePhotoPath() {
+
+    protected function resolvePhotoPath()
+    {
         return $this->getAlbum()->getId();
     }
-    
-    public static function loadValidatorMetadata(ClassMetadata $metadata) {
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
         //$metadata->addPropertyConstraint('photofile', new NotBlank());
     }
 

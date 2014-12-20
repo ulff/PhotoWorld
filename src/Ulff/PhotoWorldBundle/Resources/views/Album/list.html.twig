@@ -27,7 +27,15 @@
     {% for photo in photoList %}
         <div class="thumbnail">
             <a href="{{ path('UlffPhotoWorldBundle_showphoto', { 'id': photo.id }) }}">
-                <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}" />
+                {% if photo.getTypeCategory == 'image' %}
+                    <img class="thumbnail" src="{{ image(photo.getWebPath).resize(null, 180) }}" />
+                {% endif %}
+                {% if photo.getTypeCategory == 'video' %}
+                    <video class="thumbnail" height="180" controls>
+                        <source src="{{ abs_www_path }}{{ photo.getWebPath }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% endif %}
             </a>
         </div>
     {% else %}

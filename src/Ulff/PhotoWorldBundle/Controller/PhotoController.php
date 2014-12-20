@@ -22,27 +22,28 @@ class PhotoController extends Controller {
     public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
         $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
-        
+
         if (!$photo) {
             throw $this->createNotFoundException('Unable to find photo with given id.');
         }
-        
+
         $photoList = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoList(
            array('albumid' => $photo->getAlbum()->getId())
         );
-        
+
         $photoPosition = array_search($photo, $photoList);
-        
+
         $nextPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getNextPhoto($photo, $photo->getAlbum()->getId());
         $previousPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPreviousPhoto($photo, $photo->getAlbum()->getId());
-        
+
         return $this->render('UlffPhotoWorldBundle:Photo:show.html.twig', array(
             'photo' => $photo,
             'album' => $photo->getAlbum(),
             'nextid' => !empty($nextPhoto) ? $nextPhoto->getId() : null,
             'previd' => !empty($previousPhoto) ? $previousPhoto->getId() : null,
             'totalphotos' => count($photoList),
-            'position' => ++$photoPosition
+            'position' => ++$photoPosition,
+            'abs_www_path' => $this->container->getParameter('ulff.abs_www_path')
         ));
     }
 
@@ -55,7 +56,7 @@ class PhotoController extends Controller {
     public function uploadAction($albumid) {
         $photo = new Photo();
         $form = $this->createForm(new PhotoType(), $photo);
-        
+
         $album = $this->getAlbum($albumid);
 
         $request = $this->getRequest();
@@ -70,6 +71,7 @@ class PhotoController extends Controller {
                 $photo->setCreatedby($loggedUser->getId());
 
                 $photo->setAlbum($album);
+                $photo->resolveType();
                 $photo->upload();
 
                 $em = $this->getDoctrine()->getManager();
@@ -84,7 +86,7 @@ class PhotoController extends Controller {
                     'notice',
                     'Photo has been uploaded'
                 );
-                
+
                 return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
                     'id' => $albumid
                 )));
@@ -306,7 +308,7 @@ class PhotoController extends Controller {
             ->rotate($angle)
             ->save($photo->getAbsolutePath());
     }
-    
+
     protected function getAlbum($albumid) {
         $em = $this->getDoctrine()->getManager();
 
