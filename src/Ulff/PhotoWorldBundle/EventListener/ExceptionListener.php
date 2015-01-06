@@ -3,7 +3,6 @@
 namespace Ulff\PhotoWorldBundle\EventListener;
 
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpFoundation\Response;
 use Ulff\PhotoWorldBundle\Exceptions\UnauthorizedException;
 
 class ExceptionListener
