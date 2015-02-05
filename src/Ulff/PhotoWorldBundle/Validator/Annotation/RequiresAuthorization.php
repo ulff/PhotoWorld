@@ -5,7 +5,6 @@ namespace Ulff\PhotoWorldBundle\Validator\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Ulff\PhotoWorldBundle\Exceptions\UnauthorizedException;
 use Ulff\UserBundle\Entity\User;
 
 /**
@@ -50,7 +49,16 @@ class RequiresAuthorization
         $loggedUser = $securityContext->getToken()->getUser();
 
         if(!$loggedUser instanceof User) {
-            throw new UnauthorizedException();
+            $this->container->get('session')->getFlashBag()->add(
+                'failure',
+                'You have to be logged in to perform this action'
+            );
+
+            $redirectUrl = $this->container->get('router')->generate('fos_user_security_login');
+
+            // todo: replace that with proper solution
+            header("Location: ".$redirectUrl);
+            exit;
         }
     }
 
