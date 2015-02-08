@@ -12,8 +12,6 @@ use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
 class AlbumController extends Controller {
 
     /**
-     * @RequiresAuthorization()
-     *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */

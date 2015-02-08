@@ -15,8 +15,6 @@ use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
 class PhotoController extends Controller {
 
     /**
-     * @RequiresAuthorization()
-     *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
