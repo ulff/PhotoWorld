@@ -37,6 +37,15 @@
                     </video>
                 {% endif %}
             </a>
+            <div class="thumbnail-notes">
+                {% if photo.likeCount == 0 %}
+                    Nobody liked it yet
+                {% elseif photo.likeCount == 1 %}
+                    <strong>{{ photo.likeCount }}</strong> user likes it
+                {% else %}
+                    <strong>{{ photo.likeCount }}</strong> users like it
+                {% endif %}
+            </div>
         </div>
     {% else %}
         <div class="system-message">No photos yet</div>
