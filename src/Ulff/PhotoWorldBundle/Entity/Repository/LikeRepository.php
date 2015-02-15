@@ -12,5 +12,35 @@ use Doctrine\ORM\EntityRepository;
  */
 class LikeRepository extends EntityRepository
 {
+    public function getLike($params = array())
+    {
+        $params['maxResults'] = 1;
+        $existingLike = $this->likeQueryBuilder($params);
+        return reset($existingLike);
+    }
 
+    public function listLikes($params = array())
+    {
+        $likesList = $this->likeQueryBuilder($params);
+        return $likesList;
+    }
+
+    protected function likeQueryBuilder($params = array())
+    {
+        $qb = $this->createQueryBuilder('l');
+        $qb->select('l');
+
+        if(isset($params['maxResults'])) {
+            $qb->setMaxResults($params['maxResults']);
+        }
+
+        if(isset($params['userid'])) {
+            $qb->andWhere('l.user = :userid')->setParameter('userid', $params['userid']);
+        }
+        if(isset($params['photoid'])) {
+            $qb->andWhere('l.photo = :photoid')->setParameter('photoid', $params['photoid']);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

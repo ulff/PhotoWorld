@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author ulff
  *
  * @ORM\Entity(repositoryClass="Ulff\PhotoWorldBundle\Entity\Repository\LikeRepository")
- * @ORM\Table(name="like")
+ * @ORM\Table(name="likeit")
  * @ORM\HasLifecycleCallbacks
  */
 class Like
@@ -23,13 +23,13 @@ class Like
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Photo", inversedBy="likes")
+     * @ORM\ManyToOne(targetEntity="Photo", inversedBy="likeits")
      * @ORM\JoinColumn(name="photoid", referencedColumnName="id")
      */
     protected $photo;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Ulff\UserBundle\Entity\User", inversedBy="likes")
+     * @ORM\ManyToOne(targetEntity="Ulff\UserBundle\Entity\User", inversedBy="likeits")
      * @ORM\JoinColumn(name="userid", referencedColumnName="id")
      */
     protected $user;

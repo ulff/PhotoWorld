@@ -15,6 +15,17 @@
                 Photo: {{ position }} of {{ totalphotos }}
             </div>
 
+            {% for flashMessage in app.session.flashbag.get('notice') %}
+                <div class="system-message">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('failure') %}
+                <div class="system-failure">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
             {% if photo.title is defined %}
                 <h3>{{photo.title }}</h3>
             {% endif %}
@@ -22,6 +33,27 @@
             {% if photo.description is defined %}
                 <p class="subtitle">{{ photo.description }}</p>
             {% endif %}
+
+            <div class="likes-wrapper">
+                <div class="likes-container">
+                    {%  if likes|length > 0 %}
+                        <strong>Who likes it:</strong>
+                        <ul>
+                            {% for user in likes %}
+                                <li>{{ user.getUser.getFirstname }} {{ user.getUser.getLastname }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        Nobody likes it yet.
+                    {% endif %}
+
+                    {% if ilikeit == true %}
+                        <a class="btn btn-xs btn-danger like-button" href="{{ path('UlffPhotoWorldBundle_unlike', { 'id': photo.getId }) }}">Unlike</a>
+                    {% else %}
+                        <a class="btn btn-xs btn-success like-button" href="{{ path('UlffPhotoWorldBundle_addlike', { 'id': photo.getId }) }}">Add like</a>
+                    {% endif %}
+                </div>
+            </div>
             
             <div class="prev-next">
                  <div class="btn-group btn-group-lg">
