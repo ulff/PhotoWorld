@@ -43,10 +43,14 @@ class PhotoController extends Controller
 
         $securityContext = $this->container->get('security.context');
         $loggedUser = $securityContext->getToken()->getUser();
-        $existingLike = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->getLike(array(
-            'photoid' => $photo->getId(),
-            'userid' => $loggedUser->getId()
-        ));
+
+        $existingLike = null;
+        if($loggedUser != 'anon.') {
+            $existingLike = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->getLike(array(
+                'photoid' => $photo->getId(),
+                'userid' => $loggedUser->getId()
+            ));
+        }
 
         return $this->render('UlffPhotoWorldBundle:Photo:show.html.twig', array(
             'photo' => $photo,
