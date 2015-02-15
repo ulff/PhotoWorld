@@ -9,7 +9,8 @@ use Ulff\PhotoWorldBundle\Form\MultiUploadType;
 use Ulff\PhotoWorldBundle\Entity\Photo;
 use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
 
-class AlbumController extends Controller {
+class AlbumController extends Controller
+{
 
     /**
      * @RequiresAuthorization()
@@ -17,18 +18,26 @@ class AlbumController extends Controller {
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction($id) {
+    public function listAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
-        
+
         $album = $this->getAlbum($id);
-        
+
         $photoList = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoList(
-           array('albumid' => $id)
+            array('albumid' => $id)
         );
 
+        foreach($photoList as $photo) {
+            $likesList = $em->getRepository('UlffPhotoWorldBundle:Like')->listLikes(array(
+                'photoid' => $photo->getId()
+            ));
+            $photo->likeCount = count($likesList);
+        }
+
         $zipPath = null;
-        if(file_exists($album->getAlbumDirectoryPath().'/all.zip')) {
-            $zipPath = $album->getAlbumDirectoryWebPath().'/all.zip';
+        if (file_exists($album->getAlbumDirectoryPath() . '/all.zip')) {
+            $zipPath = $album->getAlbumDirectoryWebPath() . '/all.zip';
         }
 
         return $this->render('UlffPhotoWorldBundle:Album:list.html.twig', array(
@@ -45,11 +54,12 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \Ulff\PhotoWorldBundle\Exceptions\UnauthorizedException
      */
-    public function createAction() {
+    public function createAction()
+    {
         $album = new Album();
         $request = $this->getRequest();
         $form = $this->createForm(new AlbumType(), $album);
-        
+
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
 
@@ -89,7 +99,8 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \Ulff\PhotoWorldBundle\Exceptions\UnauthorizedException
      */
-    public function multiuploadAction($albumid) {
+    public function multiuploadAction($albumid)
+    {
 
         $album = $this->getAlbum($albumid);
 
@@ -108,7 +119,7 @@ class AlbumController extends Controller {
 
                 $photoFiles = $formData['files'];
 
-                foreach($photoFiles as $photoFile) {
+                foreach ($photoFiles as $photoFile) {
 
                     $photo = new Photo();
 
@@ -151,28 +162,29 @@ class AlbumController extends Controller {
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function generateAction($id) {
+    public function generateAction($id)
+    {
         $album = $this->getAlbum($id);
-        
+
         $albumAbsolutePath = $this->getAlbumDirectoryAbsolutePath($id);
-        
+
         $fileList = array();
-        foreach(new \DirectoryIterator($albumAbsolutePath) as $fileInfo) {
-            if($fileInfo->isDot()) {
+        foreach (new \DirectoryIterator($albumAbsolutePath) as $fileInfo) {
+            if ($fileInfo->isDot()) {
                 continue;
             }
-            if(!$this->isFileExtensionAllowed($fileInfo->getExtension())) {
+            if (!$this->isFileExtensionAllowed($fileInfo->getExtension())) {
                 continue;
             }
-            if($this->photoExists($album, $fileInfo)) {
+            if ($this->photoExists($album, $fileInfo)) {
                 continue;
             }
             $fileList[$fileInfo->getFilename()] = $fileInfo;
         }
-        
+
         ksort($fileList);
-        
-        foreach(array_keys($fileList) as $fileName) {
+
+        foreach (array_keys($fileList) as $fileName) {
             $this->generatePartiularPhoto($album, $fileName);
         }
 
@@ -180,7 +192,7 @@ class AlbumController extends Controller {
             'notice',
             'Automatically generated album with preloaded photos'
         );
-        
+
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
             'id' => $album->getId()
         )));
@@ -192,7 +204,8 @@ class AlbumController extends Controller {
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function manageAction($id) {
+    public function manageAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $album = $this->getAlbum($id);
@@ -216,7 +229,8 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function removeAction($id) {
+    public function removeAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $album = $em->getRepository('UlffPhotoWorldBundle:Album')->find($id);
@@ -229,14 +243,14 @@ class AlbumController extends Controller {
             array('albumid' => $id)
         );
 
-        foreach($photoList as $photo) {
+        foreach ($photoList as $photo) {
             @unlink($photo->getAbsolutePath());
             $em->remove($photo);
             $em->flush();
         }
 
-        if(file_exists($album->getAlbumDirectoryPath().'/all.zip')) {
-            unlink($album->getAlbumDirectoryWebPath().'/all.zip');
+        if (file_exists($album->getAlbumDirectoryPath() . '/all.zip')) {
+            unlink($album->getAlbumDirectoryWebPath() . '/all.zip');
         }
 
         @rmdir($album->getAlbumDirectoryPath());
@@ -258,7 +272,8 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function editAction($id) {
+    public function editAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
         $album = $em->getRepository('UlffPhotoWorldBundle:Album')->find($id);
 
@@ -283,7 +298,7 @@ class AlbumController extends Controller {
                 );
 
                 return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                    'id' =>  $album->getId()
+                    'id' => $album->getId()
                 )));
             }
         }
@@ -301,7 +316,8 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function defaultSortingAction($id) {
+    public function defaultSortingAction($id)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $album = $em->getRepository('UlffPhotoWorldBundle:Album')->find($id);
@@ -315,13 +331,13 @@ class AlbumController extends Controller {
         );
 
         $photoListByFileName = array();
-        foreach($photoList as $photo) {
+        foreach ($photoList as $photo) {
             $photoListByFileName[$photo->getPhotoFileName()] = $photo;
         }
         ksort($photoListByFileName);
 
         $number = 0;
-        foreach($photoListByFileName as $photo) {
+        foreach ($photoListByFileName as $photo) {
             $photo->setSortnumber(++$number);
             $em->persist($photo);
             $em->flush();
@@ -333,7 +349,7 @@ class AlbumController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-            'id' =>  $id
+            'id' => $id
         )));
 
     }
@@ -345,7 +361,8 @@ class AlbumController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function createZipAction($id) {
+    public function createZipAction($id)
+    {
 
         $em = $this->getDoctrine()->getManager();
 
@@ -359,10 +376,10 @@ class AlbumController extends Controller {
             array('albumid' => $id)
         );
 
-        if(!empty($photoList)) {
+        if (!empty($photoList)) {
 
             $zip = new \ZipArchive();
-                $zip->open($album->getAlbumDirectoryPath().'/all.zip',  \ZipArchive::CREATE);
+            $zip->open($album->getAlbumDirectoryPath() . '/all.zip', \ZipArchive::CREATE);
             foreach ($photoList as $photo) {
                 $zip->addFile($photo->getAbsolutePath(), $photo->getPhotoFileName());
             }
@@ -376,12 +393,13 @@ class AlbumController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-            'id' =>  $id
+            'id' => $id
         )));
 
     }
-    
-    protected function getAlbum($albumid) {
+
+    protected function getAlbum($albumid)
+    {
         $em = $this->getDoctrine()->getManager();
 
         $album = $em->getRepository('UlffPhotoWorldBundle:Album')->find($albumid);
@@ -392,28 +410,31 @@ class AlbumController extends Controller {
 
         return $album;
     }
-    
-    protected function getAlbumDirectoryAbsolutePath($albumid) {
-         return __DIR__ . '/../../../../web/uploads/photoworld/' . $albumid;
+
+    protected function getAlbumDirectoryAbsolutePath($albumid)
+    {
+        return __DIR__ . '/../../../../web/uploads/photoworld/' . $albumid;
     }
-    
-    protected function isFileExtensionAllowed($extension) {
+
+    protected function isFileExtensionAllowed($extension)
+    {
         $allowedExtensions = array(
-            'jpg', 
-            'jpeg', 
-            'png', 
+            'jpg',
+            'jpeg',
+            'png',
             'gif'
         );
         return in_array(strtolower($extension), $allowedExtensions);
     }
-    
-    protected function generatePartiularPhoto($album, $fileName) {
+
+    protected function generatePartiularPhoto($album, $fileName)
+    {
         $photo = new Photo();
-        
+
         $photo->setAlbum($album);
         $photo->setCreatedate(new \DateTime());
         $photo->setCreatedby(102);
-        $photo->setPath($album->getId().'/'.$fileName);
+        $photo->setPath($album->getId() . '/' . $fileName);
 
         $em = $this->getDoctrine()->getManager();
         $maxSortNumber = $em->getRepository('UlffPhotoWorldBundle:Photo')->getAlbumMaxSortNumber($album->getId());
@@ -423,11 +444,12 @@ class AlbumController extends Controller {
         $em->persist($photo);
         $em->flush();
     }
-    
-    protected function photoExists($album, $fileInfo) {
+
+    protected function photoExists($album, $fileInfo)
+    {
         $em = $this->getDoctrine()->getManager();
-        
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoByPath($album->getId().'/'.$fileInfo->getFilename());
+
+        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoByPath($album->getId() . '/' . $fileInfo->getFilename());
         return !empty($photo);
     }
 
