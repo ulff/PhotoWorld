@@ -83,7 +83,7 @@ div.fullsize-photo-container {
 }
 
 div.fullsize-photo-toolbar {
-    width: 25%; position: absolute; top: 0; bottom: 0; left: 0;
+    width: 25%; position: absolute; top: 0; bottom: 0; left: 0; padding-right: 15px;
 }
 
 img.fullsize-photo-image {
@@ -104,6 +104,10 @@ div.photo-footnotes {
 
 div.thumbnail {
     display: inline-block;
+}
+
+div.thumbnail-notes {
+
 }
 
 img.thumbnail {
@@ -140,6 +144,18 @@ div.album-zip-box {
 
 div.center-container {
     margin: 0 auto; width: 600px; border: 1px solid #a0a0a0; padding: 50px; background-color: #f0f0f0; -moz-border-radius: 15px; border-radius: 15px;
+}
+
+div.likes-container {
+    border: 1px solid #a0a0a0; -moz-border-radius: 5px; border-radius: 5px; padding: 12px; background-color: #f0f0f0; margin-right: 20px;
+}
+
+div.likes-wrapper {
+    position: absolute; width: 100%;
+}
+
+.like-button {
+    position: absolute; right: 30px; top: 10px;
 }
 
 form.form-default { font-size: 16px; }

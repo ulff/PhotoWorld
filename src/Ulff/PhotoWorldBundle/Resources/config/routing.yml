@@ -117,3 +117,18 @@ UlffPhotoWorldBundle_createalbumzip:
     requirements:
         _method:  GET
 
+UlffPhotoWorldBundle_addlike:
+    pattern:  /photo/{id}/like
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:addLike }
+    requirements:
+        _method:  GET
+        id: \d+
+
+UlffPhotoWorldBundle_unlike:
+    pattern:  /photo/{id}/unlike
+    defaults: { _controller: UlffPhotoWorldBundle:Photo:unlike }
+    requirements:
+        _method:  GET
+        id: \d+
+
+

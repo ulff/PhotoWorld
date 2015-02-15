@@ -4,6 +4,7 @@ namespace Ulff\PhotoWorldBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ulff\PhotoWorldBundle\Entity\Photo;
+use Ulff\PhotoWorldBundle\Entity\Like;
 use Ulff\PhotoWorldBundle\Form\PhotoType;
 use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
 
@@ -12,29 +13,40 @@ use Ulff\PhotoWorldBundle\Validator\Annotation\RequiresAuthorization;
  *
  * @author ulff
  */
-class PhotoController extends Controller {
+class PhotoController extends Controller
+{
+
+    protected $entityManager;
 
     /**
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function showAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
+    public function showAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
-
-        $photoList = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoList(
-           array('albumid' => $photo->getAlbum()->getId())
+        $photoList = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getPhotoList(
+            array('albumid' => $photo->getAlbum()->getId())
         );
 
         $photoPosition = array_search($photo, $photoList);
 
-        $nextPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getNextPhoto($photo, $photo->getAlbum()->getId());
-        $previousPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPreviousPhoto($photo, $photo->getAlbum()->getId());
+        $nextPhoto = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getNextPhoto($photo, $photo->getAlbum()->getId());
+        $previousPhoto = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getPreviousPhoto($photo, $photo->getAlbum()->getId());
+
+        $likesList = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->listLikes(array(
+            'photoid' => $photo->getId()
+        ));
+
+        $securityContext = $this->container->get('security.context');
+        $loggedUser = $securityContext->getToken()->getUser();
+        $existingLike = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->getLike(array(
+            'photoid' => $photo->getId(),
+            'userid' => $loggedUser->getId()
+        ));
 
         return $this->render('UlffPhotoWorldBundle:Photo:show.html.twig', array(
             'photo' => $photo,
@@ -43,7 +55,9 @@ class PhotoController extends Controller {
             'previd' => !empty($previousPhoto) ? $previousPhoto->getId() : null,
             'totalphotos' => count($photoList),
             'position' => ++$photoPosition,
-            'abs_www_path' => $this->container->getParameter('ulff.abs_www_path')
+            'abs_www_path' => $this->container->getParameter('ulff.abs_www_path'),
+            'likes' => $likesList,
+            'ilikeit' => !empty($existingLike)
         ));
     }
 
@@ -53,7 +67,9 @@ class PhotoController extends Controller {
      * @param $albumid
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function uploadAction($albumid) {
+    public function uploadAction($albumid)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
         $photo = new Photo();
         $form = $this->createForm(new PhotoType(), $photo);
 
@@ -74,13 +90,11 @@ class PhotoController extends Controller {
                 $photo->resolveType();
                 $photo->upload();
 
-                $em = $this->getDoctrine()->getManager();
-                $maxSortNumber = $em->getRepository('UlffPhotoWorldBundle:Photo')->getAlbumMaxSortNumber($albumid);
+                $maxSortNumber = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getAlbumMaxSortNumber($albumid);
                 $photo->setSortnumber(++$maxSortNumber);
 
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($photo);
-                $em->flush();
+                $this->entityManager->persist($photo);
+                $this->entityManager->flush();
 
                 $this->get('session')->getFlashBag()->add(
                     'notice',
@@ -106,13 +120,10 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function rotateleftAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
-
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
+    public function rotateleftAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
         $this->rotatePhoto($photo, 90);
 
@@ -122,8 +133,8 @@ class PhotoController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                'id' =>  $photo->getAlbum()->getId()
-            )).'#photo-id-'.$photo->getId()
+                'id' => $photo->getAlbum()->getId()
+            )) . '#photo-id-' . $photo->getId()
         );
     }
 
@@ -134,13 +145,10 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function rotaterightAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
-
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
+    public function rotaterightAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
         $this->rotatePhoto($photo, 270);
 
@@ -150,8 +158,8 @@ class PhotoController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                'id' =>  $photo->getAlbum()->getId()
-            )).'#photo-id-'.$photo->getId()
+                'id' => $photo->getAlbum()->getId()
+            )) . '#photo-id-' . $photo->getId()
         );
     }
 
@@ -162,17 +170,14 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function removeAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
-
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
+    public function removeAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
         unlink($photo->getAbsolutePath());
-        $em->remove($photo);
-        $em->flush();
+        $this->entityManager->remove($photo);
+        $this->entityManager->flush();
 
         $this->get('session')->getFlashBag()->add(
             'notice',
@@ -191,13 +196,10 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function editAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
-
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
+    public function editAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
         $form = $this->createForm(new PhotoType(), $photo);
         $form->remove('photofile');
@@ -208,8 +210,8 @@ class PhotoController extends Controller {
 
             if ($form->isValid()) {
 
-                $em->persist($photo);
-                $em->flush();
+                $this->entityManager->persist($photo);
+                $this->entityManager->flush();
 
                 $this->get('session')->getFlashBag()->add(
                     'notice',
@@ -217,8 +219,8 @@ class PhotoController extends Controller {
                 );
 
                 return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                    'id' =>  $photo->getAlbum()->getId()
-                    )).'#photo-id-'.$photo->getId()
+                        'id' => $photo->getAlbum()->getId()
+                    )) . '#photo-id-' . $photo->getId()
                 );
             }
         }
@@ -237,22 +239,19 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function moveupAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
+    public function moveupAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
-
-        $previousPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getPreviousPhoto($photo, $photo->getAlbum()->getId());
-        if(!empty($previousPhoto)) {
+        $previousPhoto = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getPreviousPhoto($photo, $photo->getAlbum()->getId());
+        if (!empty($previousPhoto)) {
             $swapNumber = $photo->getSortnumber();
             $photo->setSortnumber($previousPhoto->getSortnumber());
             $previousPhoto->setSortnumber($swapNumber);
-            $em->persist($photo);
-            $em->persist($previousPhoto);
-            $em->flush();
+            $this->entityManager->persist($photo);
+            $this->entityManager->persist($previousPhoto);
+            $this->entityManager->flush();
         }
 
         $this->get('session')->getFlashBag()->add(
@@ -261,8 +260,8 @@ class PhotoController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                'id' =>  $photo->getAlbum()->getId()
-            )).'#photo-id-'.$photo->getId()
+                'id' => $photo->getAlbum()->getId()
+            )) . '#photo-id-' . $photo->getId()
         );
     }
 
@@ -273,22 +272,19 @@ class PhotoController extends Controller {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function movedownAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('UlffPhotoWorldBundle:Photo')->find($id);
+    public function movedownAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
 
-        if (!$photo) {
-            throw $this->createNotFoundException('Unable to find photo with given id.');
-        }
-
-        $nextPhoto = $em->getRepository('UlffPhotoWorldBundle:Photo')->getNextPhoto($photo, $photo->getAlbum()->getId());
-        if(!empty($nextPhoto)) {
+        $nextPhoto = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->getNextPhoto($photo, $photo->getAlbum()->getId());
+        if (!empty($nextPhoto)) {
             $swapNumber = $photo->getSortnumber();
             $photo->setSortnumber($nextPhoto->getSortnumber());
             $nextPhoto->setSortnumber($swapNumber);
-            $em->persist($photo);
-            $em->persist($nextPhoto);
-            $em->flush();
+            $this->entityManager->persist($photo);
+            $this->entityManager->persist($nextPhoto);
+            $this->entityManager->flush();
         }
 
         $this->get('session')->getFlashBag()->add(
@@ -297,28 +293,117 @@ class PhotoController extends Controller {
         );
 
         return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_managealbum', array(
-                'id' =>  $photo->getAlbum()->getId()
-            )).'#photo-id-'.$photo->getId()
+                'id' => $photo->getAlbum()->getId()
+            )) . '#photo-id-' . $photo->getId()
         );
     }
 
-    protected function rotatePhoto($photo, $angle) {
+    /**
+     * @RequiresAuthorization()
+     *
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function addLikeAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
+
+        $securityContext = $this->container->get('security.context');
+        $loggedUser = $securityContext->getToken()->getUser();
+
+        $existingLike = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->getLike(array(
+            'userid' => $loggedUser->getId(),
+            'photoid' => $photo->getId()
+        ));
+
+        if(!empty($existingLike)) {
+            $this->get('session')->getFlashBag()->add(
+                'failure',
+                'You have already added a like for this photo'
+            );
+
+            return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_showphoto', array(
+                'id' => $photo->getId()
+            )));
+        }
+
+        $like = new Like();
+        $like->setUser($loggedUser);
+        $like->setPhoto($photo);
+        $this->entityManager->persist($like);
+        $this->entityManager->flush();
+
+        $this->get('session')->getFlashBag()->add(
+            'notice',
+            'Your like has beed added'
+        );
+
+        return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_showphoto', array(
+            'id' => $photo->getId()
+        )));
+    }
+
+    /**
+     * @RequiresAuthorization()
+     *
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function unlikeAction($id)
+    {
+        $this->entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->getPhoto($id);
+
+        $securityContext = $this->container->get('security.context');
+        $loggedUser = $securityContext->getToken()->getUser();
+
+        $existingLike = $this->entityManager->getRepository('UlffPhotoWorldBundle:Like')->getLike(array(
+            'userid' => $loggedUser->getId(),
+            'photoid' => $photo->getId()
+        ));
+
+        $this->entityManager->remove($existingLike);
+        $this->entityManager->flush();
+
+        $this->get('session')->getFlashBag()->add(
+            'notice',
+            'Your like has beed removed'
+        );
+
+        return $this->redirect($this->generateUrl('UlffPhotoWorldBundle_showphoto', array(
+            'id' => $photo->getId()
+        )));
+    }
+
+    protected function rotatePhoto($photo, $angle)
+    {
         $imageService = $this->get('image.handling');
         $imageService->open($photo->getAbsolutePath())
             ->rotate($angle)
             ->save($photo->getAbsolutePath());
     }
 
-    protected function getAlbum($albumid) {
-        $em = $this->getDoctrine()->getManager();
-
-        $album = $em->getRepository('UlffPhotoWorldBundle:Album')->find($albumid);
-
+    protected function getAlbum($albumid)
+    {
+        $album = $this->entityManager->getRepository('UlffPhotoWorldBundle:Album')->find($albumid);
         if (empty($album)) {
             throw $this->createNotFoundException('Unable to find given album.');
         }
 
         return $album;
+    }
+
+    protected function getPhoto($photoid)
+    {
+        $photo = $this->entityManager->getRepository('UlffPhotoWorldBundle:Photo')->find($photoid);
+        if (!$photo) {
+            throw $this->createNotFoundException('Unable to find photo with given id.');
+        }
+
+        return $photo;
     }
 
 }
