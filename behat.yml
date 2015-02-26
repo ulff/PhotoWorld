@@ -1,0 +1,15 @@
+default:
+    autoload:
+            - %paths.base%/test/behat/features/bootstrap/
+    suites:
+        test:
+            paths:
+                - %paths.base%/test/behat/features
+            contexts:
+                - FeatureContext
+    extensions:
+        Behat\MinkExtension:
+            base_url: http://localhost/PhotoWorld/
+            browser_name: firefox
+            goutte: ~
+            selenium2: ~
