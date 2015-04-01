@@ -1,0 +1,9 @@
+.idea/
+app/SymfonyRequirements.php
+app/bootstrap.php.cache
+app/cache/
+app/config/parameters.yml
+app/logs/
+bin/
+vendor/
+web/bundles/

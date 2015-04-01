@@ -12,4 +12,3 @@ default:
             base_url: http://localhost/PhotoWorld/
             browser_name: firefox
             goutte: ~
-            selenium2: ~
