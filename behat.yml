@@ -9,6 +9,6 @@ default:
                 - FeatureContext
     extensions:
         Behat\MinkExtension:
-            base_url: http://localhost/PhotoWorld/
+            base_url: http://photoworld.local/web/app.php
             browser_name: firefox
             goutte: ~

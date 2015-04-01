@@ -24,18 +24,85 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
 
     /**
      * @Given I am on login page
+     * @Given I go to login page
      */
     public function iAmOnLoginPage()
     {
-        throw new PendingException();
+        $this->visit('/login');
     }
 
     /**
-     * @Given I should be logged in
+     * @Given I am on register page
+     * @Given I go to register page
+     */
+    public function iAmOnRegisterPage()
+    {
+        $this->visit('/register');
+    }
+
+    /**
+     * @Given I have registered user with login :login and password :password
+     */
+    public function iHaveRegisteredUserWithLoginAndPassword($login, $password)
+    {
+        $email = $login.'@test.pl';
+        $firstname = ucfirst($login);
+        $lastname = ucfirst($login);
+
+        $this->iAmOnRegisterPage();
+        $this->fillField('Email', $email);
+        $this->fillField('Username', $login);
+        $this->fillField('Password', $password);
+        $this->fillField('Verification', $password);
+        $this->fillField('First name', $firstname);
+        $this->fillField('Last name', $lastname);
+        $this->pressButton('Register');
+    }
+
+    /**
+     * @Given I am logged in with login :login and password :password
+     */
+    public function iAmLoggedInWithLoginAndPassword($login, $password)
+    {
+        $this->iAmOnLoginPage();
+        $this->fillField('Username', $login);
+        $this->fillField('Password', $password);
+        $this->pressButton('Login');
+    }
+
+    /**
+     * @When I have logged out
+     */
+    public function iHaveLoggedOut()
+    {
+        $this->visit('/logout');
+    }
+
+    /**
+     * @Then I should be registered
+     */
+    public function iShouldBeRegistered()
+    {
+        $this->assertPageContainsText('Registration successful');
+    }
+
+    /**
+     * @Then I should be logged in
      */
     public function iShouldBeLoggedIn()
     {
-        throw new PendingException();
+        $this->assertPageNotContainsText('Log in');
+        $this->assertPageNotContainsText('Sign up');
     }
+
+    /**
+     * @Then I should not be logged in
+     */
+    public function iShouldNotBeLoggedIn()
+    {
+        $this->assertPageContainsText('Log in');
+        $this->assertPageContainsText('Sign up');
+    }
+
 
 }
