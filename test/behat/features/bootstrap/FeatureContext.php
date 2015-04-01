@@ -64,6 +64,7 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
      */
     public function iAmLoggedInWithLoginAndPassword($login, $password)
     {
+        $this->iHaveRegisteredUserWithLoginAndPassword($login, $password);
         $this->iAmOnLoginPage();
         $this->fillField('Username', $login);
         $this->fillField('Password', $password);
