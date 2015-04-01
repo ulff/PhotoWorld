@@ -23,6 +23,15 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     }
 
     /**
+     * @BeforeFeature
+     * @AfterFeature
+     */
+    public static function cleanDB()
+    {
+        //todo: database cleanup
+    }
+
+    /**
      * @Given I am on login page
      * @Given I go to login page
      */
