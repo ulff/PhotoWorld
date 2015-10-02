@@ -5,5 +5,6 @@ app/cache/
 app/config/parameters.yml
 app/logs/
 bin/
+!bin/setup.sh
 vendor/
 web/bundles/

@@ -1,10 +1,10 @@
 parameters:
     database_driver:   pdo_mysql
-    database_host:     127.0.0.1
-    database_port:     ~
+    database_host:     '%mysql.host%'
+    database_port:     3306
     database_name:     photoworld
-    database_user:     root
-    database_password: root
+    database_user:     dev
+    database_password: d3v
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
